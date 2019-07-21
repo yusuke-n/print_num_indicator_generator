@@ -22,4 +22,6 @@
     }
   }
 }
+
+@page { size: A4 landscape }
 </style>

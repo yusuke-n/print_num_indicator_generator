@@ -4,6 +4,7 @@
   <div class="num-wrapper">
     <span>枚数：</span>
     <input class="num" type="number" :value="num" min="1" @input="onNumberInput">
+    <span class="num-print">{{ num }}枚</span>
   </div>
   <div class="asset-wrapper">
     <span class="filename">{{ filenames.face === "" ? "ファイル名" : filenames.face }}</span>
@@ -46,7 +47,7 @@ export default class CardAssets extends Vue {
   @Prop({ type: Object,  default: () => { return { face: "", back: ""} } })
   readonly filenames!: Dictionary<string>
   // カード種別 "bridge" | "porker"
-  type: string = "bridge";
+  @Prop({ type: String , default: "bridge" }) readonly type!: string
   // ファイルリーダインスタンス
   reader: FileReader = new FileReader();
   // 表示用画像DataURL
@@ -147,6 +148,7 @@ export default class CardAssets extends Vue {
     span
       color: #8b8b8b
       font-size: 0.8rem
+
     
 
 .asset-wrapper
@@ -166,6 +168,8 @@ export default class CardAssets extends Vue {
 
 .num-wrapper
   margin-bottom: 4px
+  span.num-print
+    display: none
 
 input.num
   padding: 4px
@@ -189,4 +193,11 @@ span.filename
     background: #ff6969
     border-color: #9d5252
     color: #fff
+
+@media print
+  .num-wrapper
+    input.num
+      display: none
+    span.num-print
+      display: inline!important
 </style>

@@ -1,24 +1,37 @@
 <template>
 <div id="editor">
+  <header>
   <h3>印刷指示書ジェネレータ</h3>
-  <ul class="menu">
-    <li><a href="#" @click.prevent="exportJson">json出力</a></li>
-    <li>/</li>
-    <li><a href="#">PDF出力用画面の表示</a></li>
-  </ul>
   <div class="general">
-    <div class="">
-      カードサイズ
+    <div class="card-size">
+      <span>カードサイズ：</span>
+      <ul>
+        <li class="size-item">
+          <input type="radio" name="type" v-model="size" value="bridge"/>
+          <span>ブリッジ</span>
+        </li>
+        <li class="size-item">
+          <input type="radio" name="type" v-model="size" value="porker"/>
+          <span>ポーカー</span>
+        </li>
+      </ul>
     </div>
     <div class="total">
-      総枚数: {{ total }}枚
+      総枚数： {{ total }}枚
     </div>
+    <ul class="menu">
+      <li><a href="#" @click.prevent="exportJson">json出力</a></li>
+      <li>/</li>
+      <li><a href="#">印刷プレビュー</a></li>
+    </ul>
   </div>
+  </header>
   <div class="assets">
     <card-assets v-for="(item, key) in assets" :key="key"
       :filenames="item.filenames"
       :num="item.number"
       :idx="key"
+      :type="size"
       @update-filename="updateFilename"
       @update-number="updateNumber"
       @remove="remove"
@@ -34,6 +47,7 @@
 import { Component, Vue } from 'vue-property-decorator';
 import Assets from '../components/CardAssets.vue';
 import CardAsset from '../CardAsset'; 
+import Exportable from '../ExportObject';
 
 @Component({
   components: {
@@ -43,6 +57,7 @@ import CardAsset from '../CardAsset';
 
 export default class Editor extends Vue {
   assets: CardAsset[] = []
+  size: string = "bridge"
 
   created(){
     this.addItem()
@@ -54,12 +69,26 @@ export default class Editor extends Vue {
   }
 
   exportJson(): void {
-    const blob: Blob = new Blob([JSON.stringify(this.assets, null, " ")], { type: "application\/json"})
+    var exportable: Exportable  = {
+      size: this.size,
+      cards: []
+    } 
+    this.assets.forEach((el) => {
+      exportable.cards.push({ 
+        front: el.filenames.face,
+        reverse: el.filenames.back,
+        num: el.number
+      })
+    })
+    const blob: Blob = new Blob([JSON.stringify(exportable, null, " ")], { type: "application\/json"})
     const url: string = URL.createObjectURL(blob)
     let downloader = document.createElement("a")
+    downloader.setAttribute("type", "hidden");
     downloader.href = url
     downloader.download = 'index.json'
+    document.body.appendChild(downloader)
     downloader.click()
+    downloader.remove()
     URL.revokeObjectURL(url)    
   }
 
@@ -97,10 +126,14 @@ export default class Editor extends Vue {
   display: flex
   flex-direction: row
 
+ul
+  margin: 0
+  padding: 0
+  list-style-type: none
+
 ul.menu
   margin: 12px
   padding: 0
-  list-style-type: none
   display: flex
   flex-direction: row
   align-items: center
@@ -129,5 +162,25 @@ ul.menu
     &:hover
       background: #f2f2f2
 
+.general, .card-size, .card-size ul
+  display: flex
+  flex-direction: row
+  justify-content: center
+  align-items: center
+  div
+    margin: 12px
+
+.card-size ul
+
+@media print
+  html 
+    margin: 0
+    padding: 0
+  
+  header 
+    display: none!important
+
+  .add
+    display: none
 </style>
 

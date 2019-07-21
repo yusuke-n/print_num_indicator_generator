@@ -5,6 +5,10 @@ const CARD_SIZE: Dictionary<Dictionary<number>> = {
     width: 189,
     height: 280,
   },
+  porker: {
+    width: 189,
+    height: 264,
+  }
 };
 
 export { CARD_SIZE };

@@ -1,4 +1,4 @@
-# tachikita_op_generator
+# print_num_indicator_generator
 
 ## Project setup
 ```

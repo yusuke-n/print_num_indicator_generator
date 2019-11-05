@@ -1,5 +1,8 @@
 # print_num_indicator_generator
 
+# application
+deployed in https://affectionate-bardeen-2ff41b.netlify.com
+
 ## Project setup
 ```
 yarn install

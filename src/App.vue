@@ -22,6 +22,20 @@
     }
   }
 }
+html, body {
+  margin: 0;
+  padding: 0;
+}
 
+@media print{
+  @page {
+    margin: 0;
+  }
+
+  #app {
+    margin: 36px 0
+  }
+}
+  
 @page { size: A4 landscape }
 </style>

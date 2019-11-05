@@ -200,4 +200,11 @@ span.filename
       display: none
     span.num-print
       display: inline!important
+
+  .remove-button
+    display: none!important
+
+  .card-asset
+    margin-bottom: 64px
+    padding-bottom: 64px
 </style>

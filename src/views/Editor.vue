@@ -117,7 +117,6 @@ export default class Editor extends Vue {
   get total(): number {
     return this.assets.reduce((total, currentItem) => total + currentItem.number, 0)
   }
-
 }
 </script>
 
@@ -173,14 +172,14 @@ ul.menu
 .card-size ul
 
 @media print
-  html 
+  @page
     margin: 0
-    padding: 0
   
   header 
     display: none!important
 
   .add
     display: none
+  
 </style>
 

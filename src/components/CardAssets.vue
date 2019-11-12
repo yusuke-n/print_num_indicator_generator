@@ -10,22 +10,34 @@
     <span class="filename">{{ filenames.face === "" ? "ファイル名" : filenames.face }}</span>
     <div class="card-wrapper">
       <span>表</span>
-      <div class="card face" data-asset-type="face" @dragover.prevent.stop @drop.prevent="onDrop" :style="size">
-        <span data-asset-type="face" @dragover.prevent @drop.prevent.stop="onDrop" v-show="dataurl.face === null">
-          画像ファイル(jpg)をドラッグ＆ドロップしてください
-        </span>
-        <img :src="dataurl.face">
+      <div class="card face" data-asset-type="face" :style="size">
+        <div class="droppable-wrapper" data-drop-target="face">
+          <div class="droppable-area"
+            @dragover.capture.prevent.stop
+            @dragenter.prevent="onMouseEnter"
+            @dragleave.prevent="onMouseLeave"
+            @drop.prevent.stop="onDrop"
+          ></div>
+          <span v-show="dataurl.face === null">画像ファイル(jpg)をドラッグ＆ドロップしてください</span>
+        </div>
+        <img class="thumb" :src="dataurl.face">
       </div>
     </div>
   </div>
   <div class="asset-wrapper">
     <div class="card-wrapper">
       <span>裏</span>
-      <div class="card back" data-asset-type="back" @dragover.prevent.stop @drop.prevent="onDrop" :style="size">
-        <span data-asset-type="back" @dragover.prevent  @drop.prevent.stop="onDrop" v-show="dataurl.back === null">
-          画像ファイル(jpg)をドラッグ＆ドロップしてください
-        </span>
-        <img :src="dataurl.back">
+      <div class="card back" data-asset-type="back" :style="size">
+        <div class="droppable-wrapper" data-drop-target="back">
+          <div class="droppable-area"
+            @dragover.capture.prevent.stop
+            @dragenter.prevent="onMouseEnter"
+            @dragleave.prevent="onMouseLeave"
+            @drop.prevent.stop="onDrop"
+          ></div>
+          <span v-show="dataurl.back === null">画像ファイル(jpg)をドラッグ＆ドロップしてください</span>
+        </div>
+        <img class="thumb" :src="dataurl.back">
       </div>
     </div>
     <span class="filename">{{ filenames.back === "" ? "ファイル名" : filenames.back }}</span>
@@ -52,11 +64,16 @@ export default class CardAssets extends Vue {
   reader: FileReader = new FileReader();
   // 表示用画像DataURL
   dataurl: Dictionary<string | null> = { face: null, back: null};
+  dropTarget: string | null = null;
 
   async onDrop(ev: DragEvent): Promise<any> {
-    let type: string | undefined = (ev.target as HTMLElement).dataset["assetType"]
-    if(type === undefined)
+    let type: string | undefined
+    if(this.dropTarget === null)
       return
+    else {
+      type = this.dropTarget
+      var parent: HTMLElement | null = (ev.target as HTMLElement).parentElement
+    }
     
     if(ev.dataTransfer !== null) {
       let file: File = ev.dataTransfer.files[0]
@@ -65,15 +82,45 @@ export default class CardAssets extends Vue {
         return
       
       this.emitUpdateFilename(file.name, type, this.idx)
+      
+      if(parent !== null)
+        this.removeHoverClass(parent)
+        
       await this.loadImage(file)
       await this.drawDataURLToCanvas(type)
     }
   }
 
+  onMouseEnter(ev: MouseEvent): void {
+    let parent: HTMLElement | null = (ev.target as HTMLElement).parentElement
+    if(parent !== null) {
+      let target: string | undefined = parent.dataset["dropTarget"]
+      if(target !== undefined) {
+        this.dropTarget = target
+        this.addHoverClass(parent)
+      }
+    }
+  }
+
+  onMouseLeave(ev: MouseEvent): void {
+    let parent: HTMLElement | null = (ev.target as HTMLElement).parentElement
+    if(parent !== null) 
+      this.removeHoverClass(parent)
+    this.dropTarget = null
+  }
+
+  addHoverClass(elm: HTMLElement): void {
+    elm.classList.add("onhover")
+  }
+
+  removeHoverClass(elm: HTMLElement): void {
+    elm.classList.remove("onhover")
+  }
+
   loadImage(file: File): Promise<any> {
     this.reader.readAsDataURL(file)
     return new Promise((resolve, reject) => {
-      this.reader.addEventListener("loadend", () => resolve())
+      this.reader.addEventListener("loadend", () => resolve(), { once: true })
     })
   }
 
@@ -144,12 +191,11 @@ export default class CardAssets extends Vue {
     border-radius: 8px
     display: flex
     align-items: center
+    position: relative
 
     span
       color: #8b8b8b
       font-size: 0.8rem
-
-    
 
 .asset-wrapper
   display: flex
@@ -194,6 +240,28 @@ span.filename
     border-color: #9d5252
     color: #fff
 
+.droppable-wrapper
+  z-index: 10
+  width: 100%
+  height: 100%
+  display: flex
+  align-items: center
+  position: absolute
+  &.onhover
+    box-shadow: 0px 2px 12px -2px rgb(52, 139, 177)
+  span
+    position: absolute
+
+.droppable-area
+  width: 100%
+  height: 100%
+  display: flex
+  align-items: center
+  z-index: 1
+
+.thumb
+  z-index: 1
+
 @media print
   .num-wrapper
     input.num
@@ -207,4 +275,7 @@ span.filename
   .card-asset
     margin-bottom: 64px
     padding-bottom: 64px
+  
+  .droppable-area
+    display: none
 </style>

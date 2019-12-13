@@ -1,15 +1,15 @@
 {
   "name": "print_num_indicator_generator",
   "version": "0.1.0",
-  "license": "MIT",
   "scripts": {
+    "start": "vue-cli-service serve",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint",
-    "test:unit": "vue-cli-service test:unit"
+    "test:unit": "vue-cli-service test:unit",
+    "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "core-js": "^2.6.5",
+    "core-js": "^3.4.3",
     "vue": "^2.6.10",
     "vue-class-component": "^7.0.2",
     "vue-property-decorator": "^8.1.0",
@@ -18,10 +18,10 @@
   },
   "devDependencies": {
     "@types/jest": "^23.1.4",
-    "@vue/cli-plugin-babel": "^3.9.0",
-    "@vue/cli-plugin-typescript": "^3.9.0",
-    "@vue/cli-plugin-unit-jest": "^3.9.0",
-    "@vue/cli-service": "^3.9.0",
+    "@vue/cli-plugin-babel": "^4.1.1",
+    "@vue/cli-plugin-typescript": "^4.1.1",
+    "@vue/cli-plugin-unit-jest": "^4.1.1",
+    "@vue/cli-service": "^4.1.1",
     "@vue/test-utils": "1.0.0-beta.29",
     "babel-core": "7.0.0-bridge.0",
     "sass": "^1.18.0",
@@ -75,5 +75,6 @@
         "babelConfig": true
       }
     }
-  }
+  },
+  "license": "MIT"
 }

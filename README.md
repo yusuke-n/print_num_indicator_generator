@@ -1,7 +1,7 @@
 # print_num_indicator_generator
 
 # application
-deployed in https://affectionate-bardeen-2ff41b.netlify.com
+deployed in https://print-indic-generator.netlify.com/
 
 ## Project setup
 ```
